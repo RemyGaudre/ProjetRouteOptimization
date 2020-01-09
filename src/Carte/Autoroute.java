@@ -15,15 +15,15 @@ public class Autoroute extends Voie {
 	public double getPrice(){
 		double prix;
 		if (getVitesse() < 100){
-			prix = getDist() * 6 * prixEssence;
+			prix = getDist() * 6.0 * prixEssence / 100;
 		}else{
-			prix = getDist() * 7 * prixEssence;
+			prix = getDist() * 7.0 * prixEssence / 100;
 		}
 		return prix + getPrixPeage();
 	}
 	
 	public String toString(){
 		return (this.num + " " + this.nom + " " + this.villeDep.getNomL() + " " + this.villeArr.getNomL() + " " + 
-				this.dist + " " + this.vitesse + " " + this.prixPeage);
+				this.dist + " " + this.vitesse + " " + this.getPrixPeage() + " " + this.getDuree() );
 	}
 }

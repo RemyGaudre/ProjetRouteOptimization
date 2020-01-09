@@ -43,15 +43,15 @@ public class Voie {
 	}
 	
 	public double getDuree(){
-		return vitesse/dist;
+		return dist/vitesse;
 	}
 	
 	public double getPrice(){
 		double prix;
 		if (getVitesse() < 100){
-			prix = getDist() * 6 * prixEssence;
+			prix = getDist() * 6.0 * prixEssence / 100;
 		}else{
-			prix = getDist() * 7 * prixEssence;
+			prix = getDist() * 7.0 * prixEssence / 100;
 		}
 		return prix;
 	}

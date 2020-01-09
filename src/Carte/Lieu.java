@@ -5,14 +5,14 @@ import java.util.*;
 public class Lieu {
 	protected int numL;
 	protected String nomL;
-	protected double abscisse;
-	protected double ordonnee;
+	protected int abscisse;
+	protected int ordonnee;
 	protected List<Voie> voies;
 	protected boolean mark;
 	protected double potentiel;
 	protected Voie voieArrivee;
 	
-	public Lieu(int numL, String nomL, double abscisse, double ordonnee){
+	public Lieu(int numL, String nomL, int abscisse, int ordonnee){
 		this.numL = numL;
 		this.nomL = nomL;
 		this.abscisse = abscisse;

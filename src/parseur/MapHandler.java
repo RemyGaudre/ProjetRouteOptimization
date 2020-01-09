@@ -27,7 +27,7 @@ public class MapHandler implements ContentHandler {
 	 * 
 	 **/
 	public void startDocument() throws SAXException {
-		System.out.println("start document...");
+//		System.out.println("start document...");
 	}
 	/**
 	 * Traitement de fermeture du document XML : balise {@code </docbase>}
@@ -35,7 +35,7 @@ public class MapHandler implements ContentHandler {
 	 **/
 
 	public void endDocument() throws SAXException {
-		System.out.println("\nDocument termine.");
+//		System.out.println("\nDocument termine.");
 	}
 
 	/**
@@ -47,18 +47,18 @@ public class MapHandler implements ContentHandler {
 			throws SAXException {
 		if (localName.equals("ville")){
 			objet = "";
-			System.out.println("\nVILLE... ");
+//			System.out.println("\nVILLE... ");
 		}
 		else if (localName.equals("route")){
 			objet = "";
-			System.out.println("\nROUTE... ");
+//			System.out.println("\nROUTE... ");
 		}
 		else if (localName.equals("autoroute")){
 			objet = "";
-			System.out.println("\nAUTOROUTE... ");
+//			System.out.println("\nAUTOROUTE... ");
 		}
 		else // autres elements...
-			System.out.println("startElement: " + localName);
+//			System.out.println("startElement: " + localName);
 		currentTag = localName; // set variable "currentTag"
 	}
 
@@ -70,31 +70,31 @@ public class MapHandler implements ContentHandler {
 	public void endElement(String namespaceURI, String localName, String rawName) throws SAXException {
 		String[] val;
 		if (localName.equals("ville")){
-			System.out.println(objet);
+//			System.out.println(objet);
 			val = objet.split("#");
-			Lieu l = new Lieu(Integer.parseInt(val[0]), val[1],Double.parseDouble(val[2]),Double.parseDouble(val[3]));
-			System.out.println(l);
+			Lieu l = new Lieu(Integer.parseInt(val[0]), val[1],Integer.parseInt(val[2]),Integer.parseInt(val[3]));
+//			System.out.println(l);
 			map.ajoutLieu(l);
-			System.out.println("FIN VILLE.");
+//			System.out.println("FIN VILLE.");
 		}
 		else if (localName.equals("route")){
-			System.out.println(objet);
+//			System.out.println(objet);
 			val = objet.split("#");
-			System.out.println("Ville de départ : " + map.rechercheLieu(val[2]));
+//			System.out.println("Ville de départ : " + map.rechercheLieu(val[2]));
 			Route r = new Route(Integer.parseInt(val[0]), val[1], map.rechercheLieu(val[2]), map.rechercheLieu(val[3]),Double.parseDouble(val[4]),Double.parseDouble(val[5]),Integer.parseInt(val[6]));
-			System.out.println(r);
+//			System.out.println(r);
 			map.ajoutVoie(r);
-			System.out.println("FIN ROUTE.");
+//			System.out.println("FIN ROUTE.");
 		}
 		else if (localName.equals("autoroute")){
 			val = objet.split("#");
 			Autoroute a = new Autoroute(Integer.parseInt(val[0]), val[1], map.rechercheLieu(val[2]), map.rechercheLieu(val[3]),Double.parseDouble(val[4]),Double.parseDouble(val[5]),Double.parseDouble(val[6]));
 			map.ajoutVoie(a);
-			System.out.println(a);
-			System.out.println("FIN AUTOROUTE.");
+//			System.out.println(a);
+//			System.out.println("FIN AUTOROUTE.");
 		}
 		else // Autres elements eventuels...
-			System.out.println("endElement: " + localName);
+//			System.out.println("endElement: " + localName);
 		currentTag = null; // reset variable "currentTag"
 	}
 
@@ -108,11 +108,11 @@ public class MapHandler implements ContentHandler {
 			if (currentTag.equals("docbase") || currentTag.equals("ville") || currentTag.equals("route")
 					|| currentTag.equals("autoroute")) {
 				// Enclosing elements : no proper characters description, but introducing elements of sub-content 
-				System.out.println("content:");
+//				System.out.println("content:");
 			} else { 
 				// Elements of sub-content
 				String subContent = new String(ch, start, length);
-				System.out.println("content:" + subContent);
+//				System.out.println("content:" + subContent);
 				objet += subContent + "#";
 			} 
 		}
