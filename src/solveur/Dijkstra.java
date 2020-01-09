@@ -1,33 +1,56 @@
 package solveur;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.*;
-import java.util.Collections;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import Carte.*;
 import Carte.Map;
+import parseur.MapHandler;
 
 public class Dijkstra {
 	protected Map map;
 	
-	public Dijkstra(Map map){
-		this.map = map;
+	public Dijkstra(String m) throws IOException, SAXException{
+		XMLReader reader;
+		reader = XMLReaderFactory.createXMLReader("org.apache.xerces.parsers.SAXParser");
+
+		// Creation d'un flot XML sur le fichier d'entree
+		InputSource input = new InputSource(new FileInputStream(m));
+
+		MapHandler mH = new MapHandler();
+    
+		// Connexion du ContentHandler
+		reader.setContentHandler(mH);
+		// Lancement du traitement...
+		reader.parse(input);
+		this.map = mH.getMap();
 	}
 	
-	public List<Voie> pluscourtcheminDistance(Lieu A, Lieu B){
+	public List<Voie> pluscourtcheminDistance(Lieu A, Lieu B) throws trajetInexistantException{
 		List<Voie> trajet = new ArrayList<>();
 		Lieu l1;
 		Iterator<Voie> iter = null;
 		triTableau(A);
 		initialisation();
-		while(!condsortie() && !(B.getMark())){
-			l1 = trouveMin();
-			l1.visiteLieu();
-			iter = l1.getVoiesSortantes().iterator();
-			while(iter.hasNext()){
-				majDistance(iter.next());
+		try{
+			while(!condsortie() && !(B.getMark())){
+				l1 = trouveMin();
+				l1.visiteLieu();
+				iter = l1.getVoiesSortantes().iterator();
+				while(iter.hasNext()){
+					majDistance(iter.next());
+				}
+				
 			}
-			
-		}		
+		}catch(NullPointerException ex){
+			throw new trajetInexistantException();
+		}
 		l1 = B;
-		System.out.println("");
 		while(l1 != A){
 			trajet.add(l1.getVoieArrivee());
 			l1 = l1.getVoieArrivee().getVilleDep();
@@ -35,25 +58,28 @@ public class Dijkstra {
 
 		Collections.reverse(trajet);
 
-		System.out.println(trajet);
 		return trajet;
 	}
 	
-	public List<Voie> pluscourtcheminTemps(Lieu A, Lieu B){
+	public List<Voie> pluscourtcheminTemps(Lieu A, Lieu B) throws trajetInexistantException{
 		List<Voie> trajet = new ArrayList<>();
 		Lieu l1;
-		Iterator<Voie> iter=null;
-		initialisation();
+		Iterator<Voie> iter = null;
 		triTableau(A);
-		while(!condsortie() && !(B.getMark())){
-			l1 = trouveMin();
-			l1.visiteLieu();
-			iter = l1.getVoiesSortantes().iterator();
-			while(iter.hasNext()){
-				majTemps(iter.next());
+		initialisation();
+		try{
+			while(!condsortie() && !(B.getMark())){
+				l1 = trouveMin();
+				l1.visiteLieu();
+				iter = l1.getVoiesSortantes().iterator();
+				while(iter.hasNext()){
+					majTemps(iter.next());
+				}
+				
 			}
-			
-		}		
+		}catch(NullPointerException ex){
+			throw new trajetInexistantException();
+		}
 		l1 = B;
 		while(l1 != A){
 			trajet.add(l1.getVoieArrivee());
@@ -61,35 +87,42 @@ public class Dijkstra {
 		}
 
 		Collections.reverse(trajet);
+
 		return trajet;
 	}
 	
-	public List<Voie> pluscourtcheminprix(Lieu A, Lieu B){
+	public List<Voie> pluscourtcheminPrix(Lieu A, Lieu B) throws trajetInexistantException{
 		List<Voie> trajet = new ArrayList<>();
 		Lieu l1;
-		Iterator<Voie> iter=null;
-		initialisation();
+		Iterator<Voie> iter = null;
 		triTableau(A);
-		while(!condsortie() && !(B.getMark())){
-			l1 = trouveMin();
-			l1.visiteLieu();
-			iter = l1.getVoiesSortantes().iterator();
-			while(iter.hasNext()){
-				majPrix(iter.next());
+		initialisation();
+		try{
+			while(!condsortie() && !(B.getMark())){
+				l1 = trouveMin();
+				l1.visiteLieu();
+				iter = l1.getVoiesSortantes().iterator();
+				while(iter.hasNext()){
+					majPrix(iter.next());
+				}
 			}
-			
-		}		
+		}catch(NullPointerException ex){
+			throw new trajetInexistantException();
+		}
 		l1 = B;
 		while(l1 != A){
 			trajet.add(l1.getVoieArrivee());
 			l1 = l1.getVoieArrivee().getVilleDep();
 		}
+
 		Collections.reverse(trajet);
+
 		return trajet;
 	}
 	
 	private void initialisation(){
 		this.map.getLieu(0).majPotentiel(0);
+		this.map.getLieu(0).initialiseMark();
 		this.map.getLieu(0).initialiseVoieArrivee();
 		for(int i = 1; i<map.getN();i++){
 			this.map.getLieu(i).initialiseMark();
@@ -127,20 +160,16 @@ public class Dijkstra {
 		return s;
 	}
 	
+	
 	private Lieu trouveMin(){
-		double mini=100000;
+		double mini=-1;
 		Lieu lmini = null;
 		Iterator<Lieu> iterL= map.listLieux().iterator();
 		while(iterL.hasNext()){
 			Lieu l = iterL.next();
-			Iterator<Voie> iterV= l.getVoiesSortantes().iterator();
-			while(iterV.hasNext()){
-				Voie v = iterV.next();
-				if(!(v.getVilleArr().getMark()) && (v.getVilleArr().getPotentiel() < mini)){
-					lmini = v.getVilleArr();
-					mini = lmini.getPotentiel();
-				}
-					
+			if(!(l.getMark()) && l.getPotentiel() != -1 && (mini == -1 || l.getPotentiel() < mini) ){
+				lmini = l;
+				mini = lmini.getPotentiel();
 			}
 		}	
 		return lmini;
@@ -170,5 +199,49 @@ public class Dijkstra {
 		}
 	}
 	
-
+	public Map getMap(){
+		return this.map;
+	}
+	
+	public Lieu rechercheLieu(int x, int y){
+		return this.map.rechercheLieu(x, y);
+	}
+	
+	public Lieu rechercheLieu(String l){
+		return this.map.rechercheLieu(l);
+	}
+	public double getDistTotale(List<Voie> T){
+		double s = 0;
+		Iterator<Voie> iter = T.iterator();
+		while(iter.hasNext()){
+			s += iter.next().getDist();
+		}
+		return s;
+	}
+	public double getDureeTotale(List<Voie> T){
+		double s = 0;
+		Iterator<Voie> iter = T.iterator();
+		while(iter.hasNext()){
+			s += iter.next().getDuree();
+		}
+		return s;
+	}
+	public double getHeure(double t){
+		return Math.floor(t);
+	}
+	public double getMin(double t){
+		return Math.floor((t - getHeure(t))*60);
+	}
+	public double getSec(double t){
+		return Math.ceil((((t - getHeure(t))*60) - getMin(t)) * 60 ); 
+	}
+	
+	public double getCoutTotal(List<Voie> T){
+		double s = 0;
+		Iterator<Voie> iter = T.iterator();
+		while(iter.hasNext()){
+			s += iter.next().getPrice();
+		}
+		return s;
+	}
 }

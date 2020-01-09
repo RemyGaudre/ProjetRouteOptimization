@@ -30,10 +30,35 @@ public class Map {
 	
 	public Lieu rechercheLieu(String l){
 		Lieu lieu = lieux.get(0);
+		Lieu r = null;
+		boolean trouve = false;
 		Iterator<Lieu> iter= lieux.iterator();
-		while(iter.hasNext() && !(l.equals(lieu.getNomL()))){
+		while(iter.hasNext() && !trouve){
+			if(lieu.getNomL().equals(l)){
+				trouve = true;
+				r = lieu;
+			}
 			lieu = iter.next();
 		}
-		return lieu;
+		if(!trouve && lieu.getNomL().equals(l))
+			r = lieu;
+		return r;
 	}
+	
+	public Lieu rechercheLieu(int x, int y){
+		Lieu lieu = lieux.get(0);
+		Lieu r = null;
+		boolean trouve = false;
+		Iterator<Lieu> iter= lieux.iterator();
+		while(iter.hasNext() && !trouve){
+			if(x == lieu.getAbscisse() && y == lieu.getOrdonnee()){
+				trouve = true;
+				r = lieu;
+			}
+			lieu = iter.next();
+		}
+		return r;
+	}
+	
 }
+	

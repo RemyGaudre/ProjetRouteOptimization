@@ -1,14 +1,14 @@
 package Carte;
 
 public class Route extends Voie{
-	protected int ralentis;
+	protected double ralentis;
 	
-	public int getRalentis(){
+	public double getRalentis(){
 		return ralentis;
 	}
 	
 	public double getDuree(){
-		return vitesse/dist + ralentis;
+		return dist/vitesse + ralentis/60;
 	}
 	
 	public Route(int num, String nom, Lieu villeDep, Lieu villeArr, double dist, double vitesse, int ralentis){
@@ -17,7 +17,7 @@ public class Route extends Voie{
 	}
 	
 	public String toString(){
-		return (this.num + " " + this.nom + " " + this.villeDep.getNomL() + " " + this.villeArr.getNomL() + " " + 
-				this.dist + " " + this.vitesse + " " + this.ralentis);
+		return (this.getNum() + " " + this.getNom() + " " + this.villeDep.getNomL() + " " + this.villeArr.getNomL() + " " + 
+				this.dist + " " + this.getVitesse() + " " + this.getRalentis() + " " + this.getDuree());
 	}
 }
